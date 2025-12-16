@@ -1,0 +1,11 @@
+Django
+djangorestframework
+psycopg2-binary
+python-dotenv
+django-cors-headers
+djangorestframework-simplejwt
+azure-identity
+openai
+python-dotenv
+azure-ai-projects
+
