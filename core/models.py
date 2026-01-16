@@ -2,6 +2,7 @@
 
 from django.db import models
 from django.conf import settings
+import json
 
 class Traveler(models.Model):
     # Link to User (OneToOne since one user can have one traveler profile)
@@ -49,3 +50,60 @@ class Trip(models.Model):
 
     def __str__(self):
         return f"{self.traveler} → {self.destination_country}"
+
+
+class RiskAnalysisReport(models.Model):
+    """
+    Store risk analysis results from multi-agent system
+    """
+    RISK_LEVEL_CHOICES = [
+        ("Low", "Low Risk"),
+        ("Medium", "Medium Risk"),
+        ("High", "High Risk"),
+    ]
+    
+    trip = models.OneToOneField(
+        Trip,
+        on_delete=models.CASCADE,
+        related_name="risk_analysis"
+    )
+    
+    # Overall risk assessment
+    overall_risk_score = models.IntegerField(default=0)  # 0-100
+    risk_level = models.CharField(max_length=20, choices=RISK_LEVEL_CHOICES)
+    
+    # Individual agent scores
+    weather_risk_score = models.IntegerField(default=0)
+    disease_risk_score = models.IntegerField(default=0)
+    
+    # Full report as JSON
+    full_report = models.JSONField(default=dict)
+    
+    # Summary data (extracted from full report)
+    top_risks = models.JSONField(default=list)  # List of top risks
+    recommendations = models.JSONField(default=list)  # List of recommendations
+    executive_summary = models.TextField(blank=True)
+    
+    # Agent reports
+    weather_report = models.JSONField(default=dict)
+    disease_report = models.JSONField(default=dict)
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ["-created_at"]
+    
+    def __str__(self):
+        return f"Risk Analysis for {self.trip} - {self.risk_level}"
+    
+    def save(self, *args, **kwargs):
+        """Ensure risk_level is set based on overall_risk_score"""
+        if self.overall_risk_score < 30:
+            self.risk_level = "Low"
+        elif self.overall_risk_score < 60:
+            self.risk_level = "Medium"
+        else:
+            self.risk_level = "High"
+        super().save(*args, **kwargs)

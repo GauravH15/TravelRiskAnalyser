@@ -60,7 +60,7 @@
 ## 2. TRAVELER ENDPOINTS
 
 ### 2.1 Create Traveler Profile
-**Endpoint:** `POST /api/travelers/`
+**Endpoint:** `POST /core/travelers/`
 **Authentication:** Required (Bearer Token)
 
 **Request Payload:**
@@ -91,7 +91,7 @@
 ---
 
 ### 2.2 Get All Travelers
-**Endpoint:** `GET /api/travelers/`
+**Endpoint:** `GET /core/travelers/`
 **Authentication:** Required (Bearer Token)
 
 **Response (200 OK):**
@@ -113,7 +113,7 @@
 ---
 
 ### 2.3 Get Specific Traveler
-**Endpoint:** `GET /api/travelers/{id}/`
+**Endpoint:** `GET /core/travelers/{id}/`
 **Authentication:** Required (Bearer Token)
 
 **Response (200 OK):**
@@ -133,7 +133,7 @@
 ---
 
 ### 2.4 Update Traveler Profile
-**Endpoint:** `PUT /api/travelers/{id}/`
+**Endpoint:** `PUT /core/travelers/{id}/`
 **Authentication:** Required (Bearer Token)
 
 **Request Payload:**
@@ -164,7 +164,7 @@
 ---
 
 ### 2.5 Partial Update Traveler Profile
-**Endpoint:** `PATCH /api/travelers/{id}/`
+**Endpoint:** `PATCH /core/travelers/{id}/`
 **Authentication:** Required (Bearer Token)
 
 **Request Payload:**
@@ -191,7 +191,7 @@
 ---
 
 ### 2.6 Delete Traveler Profile
-**Endpoint:** `DELETE /api/travelers/{id}/`
+**Endpoint:** `DELETE /core/travelers/{id}/`
 **Authentication:** Required (Bearer Token)
 
 **Response:** 204 No Content
@@ -201,7 +201,7 @@
 ## 3. TRIP ENDPOINTS
 
 ### 3.1 Create Trip
-**Endpoint:** `POST /api/trips/`
+**Endpoint:** `POST /core/trips/`
 **Authentication:** Required (Bearer Token)
 
 **Request Payload (Traveler):**
@@ -250,7 +250,7 @@
 ---
 
 ### 3.2 Get All Trips
-**Endpoint:** `GET /api/trips/`
+**Endpoint:** `GET /core/trips/`
 **Authentication:** Required (Bearer Token)
 
 **Note:** 
@@ -290,7 +290,7 @@
 ---
 
 ### 3.3 Get Specific Trip
-**Endpoint:** `GET /api/trips/{id}/`
+**Endpoint:** `GET /core/trips/{id}/`
 **Authentication:** Required (Bearer Token)
 
 **Response (200 OK):**
@@ -312,7 +312,7 @@
 ---
 
 ### 3.4 Update Trip
-**Endpoint:** `PUT /api/trips/{id}/`
+**Endpoint:** `PUT /core/trips/{id}/`
 **Authentication:** Required (Bearer Token)
 
 **Request Payload:**
@@ -348,7 +348,7 @@
 ---
 
 ### 3.5 Partial Update Trip
-**Endpoint:** `PATCH /api/trips/{id}/`
+**Endpoint:** `PATCH /core/trips/{id}/`
 **Authentication:** Required (Bearer Token)
 
 **Request Payload:**
@@ -377,7 +377,7 @@
 ---
 
 ### 3.6 Delete Trip
-**Endpoint:** `DELETE /api/trips/{id}/`
+**Endpoint:** `DELETE /core/trips/{id}/`
 **Authentication:** Required (Bearer Token)
 
 **Response:** 204 No Content
@@ -385,7 +385,7 @@
 ---
 
 ### 3.7 Analyze Trip Risk ⭐
-**Endpoint:** `POST /api/trips/{id}/analyze-risk/`
+**Endpoint:** `POST /core/trips/{id}/analyze-risk/`
 **Authentication:** Required (Bearer Token)
 
 **Request Payload:** (No body required, uses trip data)
@@ -451,7 +451,7 @@ Response includes: access_token
 
 ### Step 3: Create Traveler Profile
 ```bash
-POST /api/travelers/
+POST /core/travelers/
 Headers: Authorization: Bearer {access_token}
 Body: {
   "passport_number": "UK987654321",
@@ -464,7 +464,7 @@ Body: {
 
 ### Step 4: Create a Trip
 ```bash
-POST /api/trips/
+POST /core/trips/
 Headers: Authorization: Bearer {access_token}
 Body: {
   "destination_country": "Singapore",
@@ -479,7 +479,7 @@ Body: {
 
 ### Step 5: Analyze Trip Risk
 ```bash
-POST /api/trips/{trip_id}/analyze-risk/
+POST /core/trips/{trip_id}/analyze-risk/
 Headers: Authorization: Bearer {access_token}
 ```
 
@@ -528,11 +528,11 @@ Headers: Authorization: Bearer {access_token}
 
 | Endpoint | Traveler | HR Manager | Admin |
 |----------|----------|-----------|-------|
-| GET /api/travelers/ | Own profile only | All | All |
-| POST /api/travelers/ | Own profile | Own profile | Own profile |
-| GET /api/trips/ | Own trips | All trips | All trips |
-| POST /api/trips/ | Own trips | Any traveler | Any traveler |
-| POST /api/trips/{id}/analyze-risk/ | Own trips | All trips | All trips |
-| DELETE /api/trips/ | Own trips | All trips | All trips |
+| GET /core/travelers/ | Own profile only | All | All |
+| POST /core/travelers/ | Own profile | Own profile | Own profile |
+| GET /core/trips/ | Own trips | All trips | All trips |
+| POST /core/trips/ | Own trips | Any traveler | Any traveler |
+| POST /core/trips/{id}/analyze-risk/ | Own trips | All trips | All trips |
+| DELETE /core/trips/ | Own trips | All trips | All trips |
 
 ---

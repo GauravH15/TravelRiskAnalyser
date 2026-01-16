@@ -5,9 +5,9 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
 from UserApp.permissions import IsAdminOrHR, IsTraveler
-from .models import Traveler, Trip
-from .serializers import TravelerSerializer , TripSerializer
-from core.service.azure_openai import analyze_trip_risk
+from .models import Traveler, Trip, RiskAnalysisReport
+from .serializers import TravelerSerializer , TripSerializer, RiskAnalysisReportSerializer
+from core.service.agents.orchestrator import orchestrator_agent
 
 
 # Create your views here.
@@ -54,11 +54,45 @@ class TripViewSet(ModelViewSet):
 
     @action(detail=True, methods=["post"], url_path="analyze-risk")
     def analyze_risk(self, request, pk=None):
+        """
+        Multi-agent risk analysis endpoint
+        Runs weather, disease, and other agents in parallel
+        """
         trip = self.get_object()
         traveler = trip.traveler
 
-        result = analyze_trip_risk(trip, traveler)
-
-        return Response(result)    
+        # Run multi-agent orchestrator
+        analysis_result = orchestrator_agent(trip, traveler)
+        
+        if analysis_result.get("status") == "success":
+            # Store the analysis result in database
+            report, created = RiskAnalysisReport.objects.update_or_create(
+                trip=trip,
+                defaults={
+                    "overall_risk_score": analysis_result.get("overall_risk_score", 0),
+                    "weather_risk_score": analysis_result.get("risk_score_breakdown", {}).get("weather_climate", 0),
+                    "disease_risk_score": analysis_result.get("risk_score_breakdown", {}).get("health_disease", 0),
+                    "full_report": analysis_result,
+                    "top_risks": analysis_result.get("top_risks", []),
+                    "recommendations": analysis_result.get("consolidated_recommendations", []),
+                    "executive_summary": analysis_result.get("executive_summary", ""),
+                    "weather_report": analysis_result.get("agent_reports", {}).get("weather_climate", {}),
+                    "disease_report": analysis_result.get("agent_reports", {}).get("health_disease", {}),
+                }
+            )
+            
+            return Response({
+                "status": "success",
+                "message": "Risk analysis completed",
+                "analysis": analysis_result,
+                "report_saved": True
+            })
+        else:
+            return Response({
+                "status": "error",
+                "message": analysis_result.get("message", "Analysis failed"),
+                "overall_risk_score": 50,
+                "risk_level": "Unknown"
+            }, status=400)    
 
 
