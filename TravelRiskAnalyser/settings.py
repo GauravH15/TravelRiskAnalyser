@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "corsheaders",
     "core",
-    "UserApp"
+    "UserApp",
+    "drf_yasg",
 ]
 
 REST_FRAMEWORK = {
@@ -55,11 +56,19 @@ REST_FRAMEWORK = {
     ),
 }
 
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=2),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+}
+
 AUTH_USER_MODEL = "UserApp.User"
 
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -143,3 +152,8 @@ AZURE_TENANT_ID = os.getenv('AZURE_TENANT_ID')
 AZURE_CLIENT_SECRET = os.getenv('AZURE_CLIENT_SECRET')
 PROJECT_ENDPOINT = os.getenv('AZURE_OPENAI_ENDPOINT')
 AZURE_OPENAI_MODEL = os.getenv('AZURE_OPENAI_DEPLOYMENT_NAME')
+
+# CORS (Cross-Origin Resource Sharing)
+# Development: allow all origins. For production, restrict via CORS_ALLOWED_ORIGINS.
+CORS_ALLOW_ALL_ORIGINS = True  # set False and use CORS_ALLOWED_ORIGINS for production security
+
